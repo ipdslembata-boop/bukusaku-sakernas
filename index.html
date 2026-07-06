@@ -177,6 +177,18 @@
             white-space: pre-line;
         }
 
+        /* Custom Formatter Styles */
+        .admin-markup-red {
+            color: var(--danger);
+            font-weight: bold;
+        }
+        .admin-markup-highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border-bottom: 1px solid var(--warning-color);
+        }
+
         /* Buttons & Forms Elements */
         .btn-edit {
             background-color: var(--gold-accent);
@@ -232,6 +244,7 @@
         /* QA Layout CSS */
         .qa-item {
             background: white;
+            border-left: 5px solid var(--gold-accent);
             border: 1px solid var(--gray-border);
             border-radius: 6px;
             padding: 15px;
@@ -251,6 +264,7 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
+        .no-answer { font-style: italic; color: #999; }
     </style>
 </head>
 <body>
@@ -279,6 +293,7 @@
             <!-- FORM TAMBAH PENEGASAN FLASHCARD PPL (ADMIN ONLY) -->
             <div id="adminFlashcardForm" class="admin-box" style="display: none;">
                 <h3>⚠️ Form Tambah Flashcard Penegasan Baru (Admin)</h3>
+                <p style="font-size:0.75rem; margin-bottom:10px; color:#666;">Petunjuk format: Gunakan *kata* untuk teks merah/tebal, dan /kalimat/ untuk sorot kuning.</p>
                 <div class="form-group">
                     <label>Judul Modul / Konsep Baru:</label>
                     <input type="text" id="newFlashcardTitle" class="form-control" placeholder="Contoh: Modul 10 - Pembukuan Usaha">
@@ -296,11 +311,12 @@
             </div>
         </div>
 
-        <!-- SEKSI 2: BUKU SAKU VALIDASI & PENEGASAN PML (NEW FEATURE) -->
+        <!-- SEKSI 2: BUKU SAKU VALIDASI & PENEGASAN PML -->
         <div id="pml-section" class="tab-content">
             <!-- FORM TAMBAH PENEGASAN PML (ADMIN ONLY) -->
             <div id="adminPmlForm" class="admin-box" style="display: none;">
                 <h3>⚠️ Form Tambah Penegasan Baru untuk PML (Admin)</h3>
+                <p style="font-size:0.75rem; margin-bottom:10px; color:#666;">Petunjuk format: Gunakan *kata* untuk teks merah/tebal, dan /kalimat/ untuk sorot kuning.</p>
                 <div class="form-group">
                     <label>Judul Aspek Pemeriksaan PML:</label>
                     <input type="text" id="newPmlTitle" class="form-control" placeholder="Contoh: Modul 10 - Aturan Editing-Coding KBJI">
@@ -357,28 +373,27 @@
 
     <script>
         let currentRole = "petugas";
-        const ADMIN_PASSWORD = "BPSLembata2026"; 
+        const ADMIN_PASSWORD = "bps"; 
 
-        // Data Penegasan PPL
+        // Data Penegasan PPL (Menggunakan markup khusus * dan /)
         const defaultMateri = [
-            { id: 1, title: "Modul 2: Aturan Hubungan & Jenis Kelamin", content: "• Jenis kelamin KRT dan pasangannya di daftar ART wajib berlawanan.[cite: 1]\n• Hubungan Menantu dilarang berkode Belum Kawin.[cite: 1]\n• Umur minimum tamat SD adalah 10 tahun.[cite: 1]", isNew: false },
-            { id: 2, title: "Modul 7 & 9: Konsep Bekerja & Pertanian Subsisten", content: "• Berdasarkan ICLS ke-19, petani gurem yang hasilnya murni dikonsumsi sendiri dimasukkan ke Bukan Angkatan Kerja (Pekerja Subsisten).[cite: 1]\n• Jika lapangan usaha utama berkode pertanian, Blok 9 wajib bernilai 1 (Ya).[cite: 1]", isNew: false }
+            { id: 1, title: "Modul 2: Aturan Hubungan & Jenis Kelamin", content: "• Jenis kelamin KRT dan pasangannya di daftar ART *wajib berlawanan*.[cite: 1]\n• Hubungan Menantu dilarang berkode *Belum Kawin*.[cite: 1]\n• /Umur minimum tamat SD adalah 10 tahun/.[cite: 1]", isNew: false },
+            { id: 2, title: "Modul 7 & 9: Konsep Bekerja & Pertanian Subsisten", content: "• Berdasarkan ICLS ke-19, petani gurem yang hasilnya murni dikonsumsi sendiri dimasukkan ke *Bukan Angkatan Kerja*.[cite: 1]\n• Jika lapangan usaha utama berkode pertanian, /Blok 9 wajib bernilai 1 (Ya)/.[cite: 1]", isNew: false }
         ];
 
-        // Data Default Kewajiban & Penegasan Pemeriksaan PML (NEW DATA)
+        // Data Penegasan PML (Menggunakan markup khusus * dan /)
         const defaultPmlMateri = [
-            { id: 501, title: "Aspek 1: Manajemen Lapangan & Entry CAPI", content: "• PML wajib melakukan pengawasan lapangan dan memeriksa kelengkapan, konsistensi, serta kewajaran isian data kuesioner SAK.AGS26-AK.[cite: 1]\n• Selama periode pendataan, jika ada temuan ketidakwajaran/anomali, ditindaklanjuti dengan memberikan status REJECT disertai catatan pemeriksaan ke perangkat PPL.[cite: 1]", isNew: false },
-            { id: 502, title: "Aspek 2: Aturan Baku Pengodean (Editing-Coding)", content: "• PML bertugas mengisikan kode isian secara akurat meliputi: kode jurusan pendidikan, jenis pelatihan, KBLI, dan KBJI berdasarkan softfile Buku Kode.[cite: 1]\n• Periksa jawaban dengan pilihan 'Lainnya' atau 'Selain alasan di atas'. Jika rincian tertulis sebenarnya sudah tercakup di pilihan teks, pindahkan kode jawaban ke opsi yang sesuai.[cite: 1]" },
-            { id: 503, title: "Aspek 3: Validasi Struktur NIK & Geotagging", content: "• Pastikan isian NIK berjumlah 16 digit. Lakukan cross-check digit tanggal lahir NIK dengan rincian jenis kelamin dan tanggal lahir kuesioner.[cite: 1]\n• Tagging koordinat lokasi (MJU_LOKASI) bersifat wajib untuk seluruh sampel rumah tangga.[cite: 1]" }
+            { id: 501, title: "Aspek 1: Manajemen Lapangan & Entry CAPI", content: "• PML wajib melakukan pengawasan lapangan dan memeriksa *kelengkapan, konsistensi, serta kewajaran* isian.[cite: 1]\n• Selama periode pendataan, jika ada temuan ketidakwajaran, ditindaklanjuti dengan memberikan /status REJECT disertai catatan pemeriksaan/.[cite: 1]", isNew: false },
+            { id: 502, title: "Aspek 2: Aturan Baku Pengodean (Editing-Coding)", content: "• PML bertugas mengisikan kode isian secara akurat meliputi: *kode jurusan, jenis pelatihan, KBLI, dan KBJI*.[cite: 1]\n• Periksa jawaban dengan pilihan 'Lainnya'. Jika rincian tertulis sebenarnya sudah tercakup di pilihan teks, /pindahkan kode jawaban ke opsi yang sesuai/.[cite: 1]", isNew: false }
         ];
 
         const defaultQA = [
-            { id: 101, modul: "Modul 7 (Bekerja)", question: "Apakah supir ojek online dimasukkan sebagai buruh atau berusaha?", answer: "Supir ojek online dikategorikan sebagai Berusaha Sendiri (Kode 2) dan secara konsep ICLS-20 masuk sebagai Dependent Contractor.[cite: 1, 2]", status: "answered", linkedTo: null }
+            { id: 101, modul: "Modul 7 (Bekerja)", question: "Apakah supir ojek online dimasukkan sebagai buruh atau berusaha?", answer: "Supir ojek online dikategorikan sebagai *Berusaha Sendiri* (Kode 2) dan secara konsep ICLS-20 masuk sebagai /Dependent Contractor/.[cite: 1, 2]", status: "answered", linkedTo: null }
         ];
 
         const defaultModulOptions = ["Modul 2 (Demografi)", "Modul 7 (Bekerja)", "Modul 9 (Pertanian)", "Modul 14 (Pekerja Informal)", "Modul Lainnya"];
 
-        // Sinkronisasi dengan LocalStorage
+        // Sinkronisasi Lokal
         let materiData = JSON.parse(localStorage.getItem("sakernas_materi")) || defaultMateri;
         let pmlMateriData = JSON.parse(localStorage.getItem("sakernas_pml_materi")) || defaultPmlMateri;
         let qaData = JSON.parse(localStorage.getItem("sakernas_qa")) || defaultQA;
@@ -389,6 +404,24 @@
             localStorage.setItem("sakernas_pml_materi", JSON.stringify(pmlMateriData));
             localStorage.setItem("sakernas_qa", JSON.stringify(qaData));
             localStorage.setItem("sakernas_modul_options", JSON.stringify(modulOptions));
+        }
+
+        // Fungsi Parser Custom: Mengubah *teks* menjadi merah/bold, dan /teks/ menjadi terhighlight
+        function parseAdminMarkup(text) {
+            if (!text) return "";
+            // Mengubah entitas HTML sementara agar aman
+            let formatted = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // Regex 1: Mengubah *kata* menjadi merah dan bold
+            formatted = formatted.replace(/\*(.*?)\*/g, '<span class="admin-markup-red">$1</span>');
+
+            // Regex 2: Mengubah /kalimat/ menjadi terhighlight kuning
+            formatted = formatted.replace(/\/(.*?)\//g, '<span class="admin-markup-highlight">$1</span>');
+
+            return formatted;
         }
 
         function toggleRoleWithAuth() {
@@ -429,7 +462,6 @@
             evt.currentTarget.classList.add("active");
         }
 
-        // Pembuatan Penegasan PPL oleh Admin
         function createFlashcard() {
             let title = document.getElementById("newFlashcardTitle").value.trim();
             let content = document.getElementById("newFlashcardContent").value.trim();
@@ -444,7 +476,6 @@
             alert("✨ Penegasan baru PPL berhasil dipublikasikan!");
         }
 
-        // NEW FEATURE: Pembuatan Penegasan Aturan Mutu PML oleh Admin
         function createPmlFlashcard() {
             let title = document.getElementById("newPmlTitle").value.trim();
             let content = document.getElementById("newPmlContent").value.trim();
@@ -483,13 +514,16 @@
             });
         }
 
-        // Render Kartu Penegasan PPL
+        // Render Kartu Penegasan PPL (Menggunakan fungsi parser markup)
         function renderMateri() {
             let container = document.getElementById("materiContainer");
             container.innerHTML = "";
             materiData.forEach(m => {
                 let cardClass = m.isNew ? "modul-card new-gold-alert" : "modul-card";
                 let warningBanner = m.isNew ? `<div class="gold-warning-banner"><span>⚠️</span> PENEGASAN BARU: Petugas Wajib Membaca!</div>` : "";
+                
+                // Jika admin, biarkan melihat kode mentah asli (* dan /) agar bisa diedit ulang secara logis
+                let displayContent = currentRole === "admin" ? m.content : parseAdminMarkup(m.content);
                 let isEditable = currentRole === "admin" ? `contenteditable="true" style="border: 1px dashed var(--gold-accent); padding: 5px;"` : `contenteditable="false"`;
                 
                 let actionButtons = "";
@@ -499,17 +533,19 @@
                     actionButtons = `<button class="btn-edit btn-submit" style="background-color: var(--light-green);" onclick="markAsUnderstood(${m.id}, 'ppl')">Selesai Memahami ✔</button>`;
                 }
                 
-                container.innerHTML += `<div class="${cardClass}" data-keywords="${m.title} ${m.content}">${warningBanner}<div class="modul-title">${m.title}</div><div id="materi-text-${m.id}" class="editable-area" ${isEditable}>${m.content}</div>${actionButtons}</div>`;
+                container.innerHTML += `<div class="${cardClass}" data-keywords="${m.title} ${m.content}">${warningBanner}<div class="modul-title">${m.title}</div><div id="materi-text-${m.id}" class="editable-area" ${isEditable}>${displayContent}</div>${actionButtons}</div>`;
             });
         }
 
-        // NEW FEATURE: Render Buku Saku Penegasan & Aturan Pemeriksaan PML
+        // Render Buku Saku Penegasan & Aturan Pemeriksaan PML (Menggunakan fungsi parser markup)
         function renderPmlMateri() {
             let container = document.getElementById("pmlContainer");
             container.innerHTML = "";
             pmlMateriData.forEach(m => {
                 let cardClass = m.isNew ? "modul-card new-gold-alert" : "modul-card";
                 let warningBanner = m.isNew ? `<div class="gold-warning-banner"><span>⚠️</span> PENEGASAN MUTU PEMERIKSAAN BARU UNTUK PML!</div>` : "";
+                
+                let displayContent = currentRole === "admin" ? m.content : parseAdminMarkup(m.content);
                 let isEditable = currentRole === "admin" ? `contenteditable="true" style="border: 1px dashed var(--gold-accent); padding: 5px;"` : `contenteditable="false"`;
                 
                 let actionButtons = "";
@@ -519,7 +555,7 @@
                     actionButtons = `<button class="btn-edit btn-submit" style="background-color: var(--primary-green);" onclick="markAsUnderstood(${m.id}, 'pml')">Selesai Memahami ✔</button>`;
                 }
                 
-                container.innerHTML += `<div class="${cardClass}" data-keywords="${m.title} ${m.content}">${warningBanner}<div class="modul-title" style="color:var(--light-green);">${m.title}</div><div id="pml-text-${m.id}" class="editable-area" ${isEditable}>${m.content}</div>${actionButtons}</div>`;
+                container.innerHTML += `<div class="${cardClass}" data-keywords="${m.title} ${m.content}">${warningBanner}<div class="modul-title" style="color:var(--light-green);">${m.title}</div><div id="pml-text-${m.id}" class="editable-area" ${isEditable}>${displayContent}</div>${actionButtons}</div>`;
             });
         }
 
@@ -555,7 +591,14 @@
             }
             saveData();
             alert("✅ Penegasan Berhasil Diperbarui oleh Admin!");
+            type === 'ppl' ? renderMateri() : renderPmlMateri();
         }
+
+        document.addEventListener("focusout", function(e) {
+            if (e.target && e.target.classList.contains("editable-area")) {
+                // Mencegah parsing berjalan langsung di layar editor saat fokus hilang sebelum diklik simpan
+            }
+        });
 
         function searchModul(containerId, barId) {
             let query = document.getElementById(barId).value.toLowerCase();
@@ -614,8 +657,11 @@
                 let answerBlock = "";
                 let badgeLinked = q.linkedTo ? `<div class="linked-badge">🔗 Duplikat (Merujuk ke: "${q.linkedTo}")</div>` : "";
                 
+                // Gunakan parser markup pada visualisasi teks jawaban Q&A
+                let parsedAnswer = parseAdminMarkup(q.answer);
+
                 if (q.status === "answered") {
-                    answerBlock = `<div class="qa-answer">${badgeLinked} <strong>💡 Jawaban Resmi Admin:</strong> ${q.answer}</div>`;
+                    answerBlock = `<div class="qa-answer">${badgeLinked} <strong>💡 Jawaban Resmi Admin:</strong> ${parsedAnswer}</div>`;
                 } else {
                     if (currentRole === "admin") {
                         answerBlock = `
