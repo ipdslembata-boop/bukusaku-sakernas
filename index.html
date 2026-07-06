@@ -75,7 +75,7 @@
 
         .tab-btn {
             flex: 1;
-            min-width: 140px;
+            min-width: 130px;
             padding: 15px 5px;
             background: none;
             border: none;
@@ -177,17 +177,65 @@
             white-space: pre-line;
         }
 
-        /* Custom Formatter Styles */
-        .admin-markup-red {
-            color: var(--danger);
+        /* Skenario Contoh Kasus Accordion Style */
+        .case-card {
+            background: var(--white);
+            border: 1px solid var(--gray-border);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .case-header {
+            padding: 18px 20px;
+            background-color: var(--white);
             font-weight: bold;
+            color: var(--primary-green);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--gold-accent);
+            user-select: none;
         }
-        .admin-markup-highlight {
-            background-color: #fff3cd;
-            padding: 2px 4px;
-            border-radius: 3px;
-            border-bottom: 1px solid var(--warning-color);
+        .case-header:hover { background-color: var(--bg-light); }
+        
+        .case-body-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+            background-color: #fbfcfb;
         }
+        .case-body-wrapper.open {
+            max-height: 2000px;
+            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+            border-top: 1px solid var(--gray-border);
+        }
+        .case-content {
+            padding: 20px;
+            font-size: 0.95rem;
+        }
+
+        /* Pemisahan Jarak Visual Kasus vs Jawaban */
+        .case-block-scenario {
+            background-color: var(--white);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--gray-border);
+            margin-bottom: 20px; /* Jarak renggang bawah */
+        }
+        .case-block-solution {
+            background-color: #f1f7f3; /* Hijau super muda jernih */
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--light-green);
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Custom Formatter Aturan Blok Admin */
+        .admin-markup-red { color: var(--danger); font-weight: bold; }
+        .admin-markup-highlight { background-color: #fff3cd; padding: 2px 4px; border-radius: 3px; border-bottom: 1px solid var(--warning-color); }
 
         /* Buttons & Forms Elements */
         .btn-edit {
@@ -201,32 +249,14 @@
             margin-top: 10px;
             font-size: 0.85rem;
         }
-        .btn-action-panel {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
+        .btn-action-panel { display: flex; gap: 8px; margin-top: 10px; padding: 0 20px 15px 20px; }
         .btn-delete { background-color: var(--danger); color: white; }
         .btn-link-action { background-color: var(--info-blue); color: white; }
 
-        .qa-form {
-            background: var(--white);
-            border: 1px solid var(--gray-border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
+        .qa-form { background: var(--white); border: 1px solid var(--gray-border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--gray-border);
-            border-radius: 6px;
-            outline: none;
-        }
+        .form-control { width: 100%; padding: 10px; border: 1px solid var(--gray-border); border-radius: 6px; outline: none; }
         .form-control:focus { border-color: var(--gold-accent); }
 
         .btn-submit {
@@ -242,29 +272,11 @@
         .btn-submit:hover { background-color: #246628; }
 
         /* QA Layout CSS */
-        .qa-item {
-            background: white;
-            border-left: 5px solid var(--gold-accent);
-            border: 1px solid var(--gray-border);
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
+        .qa-item { background: white; border: 1px solid var(--gray-border); border-radius: 6px; padding: 15px; margin-bottom: 15px; }
         .qa-question { font-weight: bold; color: #b22222; }
         .qa-meta { font-size: 0.75rem; color: #777; margin-bottom: 8px; }
         .qa-answer { background: var(--bg-light); padding: 10px; border-radius: 4px; margin-top: 8px; font-size: 0.95rem;}
-        .linked-badge {
-            display: inline-block;
-            background-color: var(--info-blue);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .no-answer { font-style: italic; color: #999; }
+        .linked-badge { display: inline-block; background-color: var(--info-blue); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-bottom: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -283,6 +295,7 @@
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab(event, 'materi-section')">📖 PENEGASAN PPL</button>
         <button class="tab-btn" onclick="switchTab(event, 'pml-section')">🔍 BUKU SAKU PML</button>
+        <button class="tab-btn" onclick="switchTab(event, 'kasus-section')">💡 CONTOH KASUS</button>
         <button class="tab-btn" onclick="switchTab(event, 'qa-section')">💬 FORUM Q&amp;A</button>
     </div>
 
@@ -306,9 +319,7 @@
             </div>
 
             <input type="text" id="searchBar" class="search-box" placeholder="Cari penegasan modul PPL..." onkeyup="searchModul('materiContainer', 'searchBar')">
-            <div id="materiContainer">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <div id="materiContainer"></div>
         </div>
 
         <!-- SEKSI 2: BUKU SAKU VALIDASI & PENEGASAN PML -->
@@ -329,12 +340,31 @@
             </div>
 
             <input type="text" id="searchPmlBar" class="search-box" placeholder="Cari aspek pemeriksaan PML..." onkeyup="searchModul('pmlContainer', 'searchPmlBar')">
-            <div id="pmlContainer">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <div id="pmlContainer"></div>
         </div>
 
-        <!-- SEKSI 3: FORUM TANYA JAWAB -->
+        <!-- SEKSI 3: CONTOH KASUS INTERAKTIF (DENGAN JARAK AMAN BERARSIR) -->
+        <div id="kasus-section" class="tab-content">
+            <!-- FORM TAMBAH CONTOH KASUS BARU (ADMIN ONLY) -->
+            <div id="adminCaseForm" class="admin-box" style="display: none;">
+                <h3>💡 Form Tambah Contoh Kasus Baru (Admin)</h3>
+                <p style="font-size:0.75rem; margin-bottom:10px; color:#666;">Petunjuk pemisahan blok: Gunakan penanda khusus [JAWABAN] di baris baru untuk memisahkan teks kasus dengan isi pembahasan solusi.</p>
+                <div class="form-group">
+                    <label>Judul Skenario Kasus Lapangan:</label>
+                    <input type="text" id="newCaseTitle" class="form-control" placeholder="Contoh: Kasus 1 - Perceraian Rumah Tangga Panel">
+                </div>
+                <div class="form-group">
+                    <label>Isi Skenario Masalah &amp; Solusi Pembahasan Analisis BPS:</label>
+                    <textarea id="newCaseContent" class="form-control" rows="6" placeholder="Ketik Skenario Kasus di sini...&#10;[JAWABAN]&#10;Ketik Pembahasan Solusi BPS di sini..."></textarea>
+                </div>
+                <button class="btn-submit" style="background-color: var(--primary-green);" onclick="createCaseCard()">📢 Publikasikan Kasus Baru</button>
+            </div>
+
+            <input type="text" id="searchCaseBar" class="search-box" placeholder="Cari contoh kasus lapangan..." onkeyup="searchCaseCards()">
+            <div id="caseContainer"></div>
+        </div>
+
+        <!-- SEKSI 4: FORUM TANYA JAWAB -->
         <div id="qa-section" class="tab-content">
             <!-- FORM TAMBAH DAFTAR MODUL BARU (ADMIN ONLY) -->
             <div id="adminModulForm" class="admin-box" style="display: none;">
@@ -351,9 +381,7 @@
                 <h3>Form Ajukan Pertanyaan (PPL)</h3>
                 <div class="form-group" style="margin-top:10px;">
                     <label>Modul Terkait:</label>
-                    <select id="qaModul" class="form-control">
-                        <!-- Dropdown dimuat secara dinamis oleh JavaScript -->
-                    </select>
+                    <select id="qaModul" class="form-control"></select>
                 </div>
                 <div class="form-group">
                     <label>Pertanyaan Lapangan / Kendali Mutu:</label>
@@ -363,64 +391,59 @@
             </div>
 
             <!-- List Pertanyaan Lapangan -->
-            <h3>Daftar Pertanyaan &amp; Penegasan Jawaban</h3>
-            <div id="qaContainer" style="margin-top:15px;">
-                <!-- Diisi otomatis oleh JavaScript -->
-            </div>
+            <h3>Daftar Pertanyaan Lapangan</h3>
+            <div id="qaContainer" style="margin-top:15px;"></div>
         </div>
 
     </div>
 
     <script>
         let currentRole = "petugas";
-        const ADMIN_PASSWORD = "Bps"; 
+        const ADMIN_PASSWORD = "BPSLembata2026"; 
 
-        // Data Penegasan PPL (Menggunakan markup khusus * dan /)
+        // Data Penegasan PPL (Sudah dibersihkan dari penanda cite)
         const defaultMateri = [
-            { id: 1, title: "Modul 2: Aturan Hubungan & Jenis Kelamin", content: "• Jenis kelamin KRT dan pasangannya di daftar ART *wajib berlawanan*.[cite: 1]\n• Hubungan Menantu dilarang berkode *Belum Kawin*.[cite: 1]\n• /Umur minimum tamat SD adalah 10 tahun/.[cite: 1]", isNew: false },
-            { id: 2, title: "Modul 7 & 9: Konsep Bekerja & Pertanian Subsisten", content: "• Berdasarkan ICLS ke-19, petani gurem yang hasilnya murni dikonsumsi sendiri dimasukkan ke *Bukan Angkatan Kerja*.[cite: 1]\n• Jika lapangan usaha utama berkode pertanian, /Blok 9 wajib bernilai 1 (Ya)/.[cite: 1]", isNew: false }
+            { id: 1, title: "Modul 2: Aturan Hubungan & Jenis Kelamin", content: "• Jenis kelamin KRT dan pasangannya di daftar ART *wajib berlawanan*.\n• Hubungan Menantu dilarang berkode *Belum Kawin*.\n• /Umur minimum tamat SD adalah 10 tahun/.", isNew: false },
+            { id: 2, title: "Modul 7 & 9: Konsep Bekerja & Pertanian Subsisten", content: "• Berdasarkan ICLS ke-19, petani gurem yang hasilnya murni dikonsumsi sendiri dimasukkan ke *Bukan Angkatan Kerja*.\n• Jika lapangan usaha utama berkode pertanian, /Blok 9 wajib bernilai 1 (Ya)/.", isNew: false }
         ];
 
-        // Data Penegasan PML (Menggunakan markup khusus * dan /)
+        // Data Penegasan PML (Sudah dibersihkan dari penanda cite)
         const defaultPmlMateri = [
-            { id: 501, title: "Aspek 1: Manajemen Lapangan & Entry CAPI", content: "• PML wajib melakukan pengawasan lapangan dan memeriksa *kelengkapan, konsistensi, serta kewajaran* isian.[cite: 1]\n• Selama periode pendataan, jika ada temuan ketidakwajaran, ditindaklanjuti dengan memberikan /status REJECT disertai catatan pemeriksaan/.[cite: 1]", isNew: false },
-            { id: 502, title: "Aspek 2: Aturan Baku Pengodean (Editing-Coding)", content: "• PML bertugas mengisikan kode isian secara akurat meliputi: *kode jurusan, jenis pelatihan, KBLI, dan KBJI*.[cite: 1]\n• Periksa jawaban dengan pilihan 'Lainnya'. Jika rincian tertulis sebenarnya sudah tercakup di pilihan teks, /pindahkan kode jawaban ke opsi yang sesuai/.[cite: 1]", isNew: false }
+            { id: 501, title: "Aspek 1: Manajemen Lapangan & Entry CAPI", content: "• PML wajib melakukan pengawasan lapangan dan memeriksa *kelengkapan, konsistensi, serta kewajaran* isian.\n• Selama periode pendataan, jika ada temuan ketidakwajaran, ditindaklanjuti dengan memberikan /status REJECT disertai catatan pemeriksaan/.", isNew: false }
+        ];
+
+        // Data Contoh Kasus Lapangan Terpisah Blok dengan Jarak Renggang
+        const defaultCaseData = [
+            { id: 801, title: "Kasus 1: Perubahan KRT pada Rumah Tangga Panel", content: "Keluarga Arif Siswanto terpilih sebagai sampel panel Februari. Pada April 2026, Arif bercerai dengan Indah (istri) dan pindah keluar SLS. Di rumah tersebut sekarang tinggal Indah bersama suami barunya (Khairil Anwar) yang menanggung seluruh kebutuhan harian dapur.\n[JAWABAN]\nSampel panel *tetap dipertahankan* karena masih ada ART dari periode Februari (Indah & anak) yang tinggal menetap.\n• Rincian 3b (Nama Kepala Keluarga hasil pemutakhiran) diubah menjadi *Khairil Anwar*.\n• Rincian 6 (Keberadaan keluarga) diisi kode *1 (Ditemukan)*.\n• Rincian 9 (Identifikasi KK/KRT) diisi kode *1 (Kepala Keluarga saja)*, dan Rincian 10 diisi nama KRT baru yang menanggung dapur yaitu *Khairil Anwar*." },
+            { id: 802, title: "Kasus 2: Dua Rumah Tangga Panel Bergabung Jadi Satu", content: "Rumah tangga Yahya Yunarko dan rumah tangga Chandra Susanto merupakan dua sampel yang terpisah pada Februari 2026. Namun pada Agustus 2026, kepengurusan kebutuhan hidup sehari-hari dari keluarga Chandra Susanto bergabung dengan keluarga Yahya Yunarko.\n[JAWABAN]\nKondisi ini menyebabkan jumlah target sampel rumah tangga dalam SLS berkurang satu.\n• Hanya rumah tangga Yahya Yunarko yang berstatus /Eligible/ sebagai sampel.\n• Nomor urut rumah tangga (Rincian 8) keluarga Chandra dituliskan mengikuti nomor urut rumah tangga penanggungnya yaitu Yahya Yunarko.\n• Pada DSRT Agustus, hanya akan muncul nama *Yahya Yunarko*. Saat pendataan lengkap, lakukan penyesuaian susunan ART gabungan." }
         ];
 
         const defaultQA = [
-            { id: 101, modul: "Modul 7 (Bekerja)", question: "Apakah supir ojek online dimasukkan sebagai buruh atau berusaha?", answer: "Supir ojek online dikategorikan sebagai *Berusaha Sendiri* (Kode 2) dan secara konsep ICLS-20 masuk sebagai /Dependent Contractor/.[cite: 1, 2]", status: "answered", linkedTo: null }
+            { id: 101, modul: "Modul 7 (Bekerja)", question: "Apakah supir ojek online dimasukkan sebagai buruh atau berusaha?", answer: "Supir ojek online dikategorikan sebagai *Berusaha Sendiri* (Kode 2) dan secara konsep ICLS-20 masuk sebagai /Dependent Contractor/.", status: "answered", linkedTo: null }
         ];
 
         const defaultModulOptions = ["Modul 2 (Demografi)", "Modul 7 (Bekerja)", "Modul 9 (Pertanian)", "Modul 14 (Pekerja Informal)", "Modul Lainnya"];
 
-        // Sinkronisasi Lokal
         let materiData = JSON.parse(localStorage.getItem("sakernas_materi")) || defaultMateri;
         let pmlMateriData = JSON.parse(localStorage.getItem("sakernas_pml_materi")) || defaultPmlMateri;
+        let caseData = JSON.parse(localStorage.getItem("sakernas_cases")) || defaultCaseData;
         let qaData = JSON.parse(localStorage.getItem("sakernas_qa")) || defaultQA;
         let modulOptions = JSON.parse(localStorage.getItem("sakernas_modul_options")) || defaultModulOptions;
 
         function saveData() {
             localStorage.setItem("sakernas_materi", JSON.stringify(materiData));
             localStorage.setItem("sakernas_pml_materi", JSON.stringify(pmlMateriData));
+            localStorage.setItem("sakernas_cases", JSON.stringify(caseData));
             localStorage.setItem("sakernas_qa", JSON.stringify(qaData));
             localStorage.setItem("sakernas_modul_options", JSON.stringify(modulOptions));
         }
 
-        // Fungsi Parser Custom: Mengubah *teks* menjadi merah/bold, dan /teks/ menjadi terhighlight
+        // Parser Markup Aturan (* dan /)
         function parseAdminMarkup(text) {
             if (!text) return "";
-            // Mengubah entitas HTML sementara agar aman
-            let formatted = text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-
-            // Regex 1: Mengubah *kata* menjadi merah dan bold
+            let formatted = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             formatted = formatted.replace(/\*(.*?)\*/g, '<span class="admin-markup-red">$1</span>');
-
-            // Regex 2: Mengubah /kalimat/ menjadi terhighlight kuning
             formatted = formatted.replace(/\/(.*?)\//g, '<span class="admin-markup-highlight">$1</span>');
-
             return formatted;
         }
 
@@ -446,9 +469,11 @@
             document.getElementById("askFormContainer").style.display = currentRole === "petugas" ? "block" : "none";
             document.getElementById("adminFlashcardForm").style.display = currentRole === "admin" ? "block" : "none";
             document.getElementById("adminPmlForm").style.display = currentRole === "admin" ? "block" : "none";
+            document.getElementById("adminCaseForm").style.display = currentRole === "admin" ? "block" : "none";
             document.getElementById("adminModulForm").style.display = currentRole === "admin" ? "block" : "none";
             renderMateri();
             renderPmlMateri();
+            renderCaseCards();
             renderQA();
             renderModulDropdown();
         }
@@ -490,6 +515,20 @@
             alert("✨ Penegasan aspek pemeriksaan baru PML berhasil dipublikasikan!");
         }
 
+        function createCaseCard() {
+            let title = document.getElementById("newCaseTitle").value.trim();
+            let content = document.getElementById("newCaseContent").value.trim();
+            if (!title || !content) { alert("⚠️ Judul skenario kasus dan analisis pembahasan wajib diisi!"); return; }
+
+            let newCase = { id: Date.now(), title: title, content: content };
+            caseData.unshift(newCase);
+            saveData();
+            document.getElementById("newCaseTitle").value = "";
+            document.getElementById("newCaseContent").value = "";
+            renderCaseCards();
+            alert("✨ Skenario contoh kasus lapangan baru berhasil dipublikasikan!");
+        }
+
         function addNewModulCategory() {
             let modulName = document.getElementById("newModulName").value.trim();
             if (!modulName) { alert("⚠️ Nama kategori modul tidak boleh kosong!"); return; }
@@ -509,20 +548,15 @@
         function renderModulDropdown() {
             let select = document.getElementById("qaModul");
             select.innerHTML = "";
-            modulOptions.forEach(opt => {
-                select.innerHTML += `<option value="${opt}">${opt}</option>`;
-            });
+            modulOptions.forEach(opt => { select.innerHTML += `<option value="${opt}">${opt}</option>`; });
         }
 
-        // Render Kartu Penegasan PPL (Menggunakan fungsi parser markup)
         function renderMateri() {
             let container = document.getElementById("materiContainer");
             container.innerHTML = "";
             materiData.forEach(m => {
                 let cardClass = m.isNew ? "modul-card new-gold-alert" : "modul-card";
                 let warningBanner = m.isNew ? `<div class="gold-warning-banner"><span>⚠️</span> PENEGASAN BARU: Petugas Wajib Membaca!</div>` : "";
-                
-                // Jika admin, biarkan melihat kode mentah asli (* dan /) agar bisa diedit ulang secara logis
                 let displayContent = currentRole === "admin" ? m.content : parseAdminMarkup(m.content);
                 let isEditable = currentRole === "admin" ? `contenteditable="true" style="border: 1px dashed var(--gold-accent); padding: 5px;"` : `contenteditable="false"`;
                 
@@ -532,19 +566,16 @@
                 } else if (m.isNew) {
                     actionButtons = `<button class="btn-edit btn-submit" style="background-color: var(--light-green);" onclick="markAsUnderstood(${m.id}, 'ppl')">Selesai Memahami ✔</button>`;
                 }
-                
                 container.innerHTML += `<div class="${cardClass}" data-keywords="${m.title} ${m.content}">${warningBanner}<div class="modul-title">${m.title}</div><div id="materi-text-${m.id}" class="editable-area" ${isEditable}>${displayContent}</div>${actionButtons}</div>`;
             });
         }
 
-        // Render Buku Saku Penegasan & Aturan Pemeriksaan PML (Menggunakan fungsi parser markup)
         function renderPmlMateri() {
             let container = document.getElementById("pmlContainer");
             container.innerHTML = "";
             pmlMateriData.forEach(m => {
                 let cardClass = m.isNew ? "modul-card new-gold-alert" : "modul-card";
                 let warningBanner = m.isNew ? `<div class="gold-warning-banner"><span>⚠️</span> PENEGASAN MUTU PEMERIKSAAN BARU UNTUK PML!</div>` : "";
-                
                 let displayContent = currentRole === "admin" ? m.content : parseAdminMarkup(m.content);
                 let isEditable = currentRole === "admin" ? `contenteditable="true" style="border: 1px dashed var(--gold-accent); padding: 5px;"` : `contenteditable="false"`;
                 
@@ -554,9 +585,104 @@
                 } else if (m.isNew) {
                     actionButtons = `<button class="btn-edit btn-submit" style="background-color: var(--primary-green);" onclick="markAsUnderstood(${m.id}, 'pml')">Selesai Memahami ✔</button>`;
                 }
-                
                 container.innerHTML += `<div class="${cardClass}" data-keywords="${m.title} ${m.content}">${warningBanner}<div class="modul-title" style="color:var(--light-green);">${m.title}</div><div id="pml-text-${m.id}" class="editable-area" ${isEditable}>${displayContent}</div>${actionButtons}</div>`;
             });
+        }
+
+        // Render Contoh Kasus Lapangan Berjarak Visual Renggang
+        function renderCaseCards() {
+            let container = document.getElementById("caseContainer");
+            container.innerHTML = "";
+
+            if (caseData.length === 0) {
+                container.innerHTML = "<p class='no-answer'>Belum ada contoh skenario kasus lapangan yang dimasukkan.</p>";
+                return;
+            }
+
+            caseData.forEach(c => {
+                let formattedBody = "";
+                
+                if (currentRole === "admin") {
+                    // Tampilkan kode mentah [JAWABAN] agar admin mudah mengedit teks asli harian
+                    formattedBody = `<div id="case-text-${c.id}" class="editable-area" contenteditable="true" style="border: 1px dashed var(--gold-accent); padding: 10px; background:#fff;">${c.content}</div>`;
+                } else {
+                    // Memecah isi teks kasus menggunakan pemisah [JAWABAN]
+                    let parts = c.content.split("[JAWABAN]");
+                    let scenarioPart = parts[0] ? parts[0].trim() : "";
+                    let solutionPart = parts[1] ? parts[1].trim() : "";
+                    
+                    // Membentuk arsitektur visual berjarak aman antar blok teks
+                    formattedBody = `
+                        <div class="case-block-scenario">
+                            <strong>📋 Skenario Masalah Lapangan:</strong><br>
+                            ${parseAdminMarkup(scenarioPart)}
+                        </div>
+                        <div class="case-block-solution">
+                            <strong>💡 Solusi Analisis &amp; Aturan Kode BPS:</strong><br>
+                            ${parseAdminMarkup(solutionPart)}
+                        </div>
+                    `;
+                }
+                
+                let adminControls = currentRole === "admin" ? `
+                    <div class="btn-action-panel" style="padding:0; margin-top:10px;">
+                        <button class="btn-edit" onclick="saveCaseText(${c.id})">💾 Simpan Kasus</button>
+                        <button class="btn-edit btn-delete" onclick="deleteCaseCard(${c.id})">🗑️ Hapus Kasus</button>
+                    </div>` : "";
+
+                container.innerHTML += `
+                    <div class="case-card" data-keywords="${c.title} ${c.content}">
+                        <div class="case-header" onclick="toggleCaseAccordion(this)">
+                            <span>💡 ${c.title}</span>
+                            <span class="chevron-icon">▼</span>
+                        </div>
+                        <div class="case-body-wrapper">
+                            <div class="case-content">
+                                ${formattedBody}
+                                ${adminControls}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleCaseAccordion(headerElement) {
+            let wrapper = headerElement.nextElementSibling;
+            let chevron = headerElement.querySelector(".chevron-icon");
+            
+            if (wrapper.classList.contains("open")) {
+                wrapper.classList.remove("open");
+                chevron.innerText = "▼";
+            } else {
+                let allWrappers = document.getElementsByClassName("case-body-wrapper");
+                let allChevrons = document.getElementsByClassName("chevron-icon");
+                for(let i=0; i<allWrappers.length; i++) {
+                    allWrappers[i].classList.remove("open");
+                    allChevrons[i].innerText = "▼";
+                }
+                wrapper.classList.add("open");
+                chevron.innerText = "▲";
+            }
+        }
+
+        function saveCaseText(id) {
+            let updatedText = document.getElementById(`case-text-${id}`).innerText;
+            let index = caseData.findIndex(item => item.id === id);
+            if (index !== -1) {
+                caseData[index].content = updatedText;
+                saveData();
+                alert("✅ Skenario Contoh Kasus Berhasil Diperbarui Admin!");
+                renderCaseCards();
+            }
+        }
+
+        function deleteCaseCard(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus contoh kasus lapangan ini?")) {
+                caseData = caseData.filter(item => item.id !== id);
+                saveData();
+                renderCaseCards();
+            }
         }
 
         function markAsUnderstood(id, type) {
@@ -594,16 +720,19 @@
             type === 'ppl' ? renderMateri() : renderPmlMateri();
         }
 
-        document.addEventListener("focusout", function(e) {
-            if (e.target && e.target.classList.contains("editable-area")) {
-                // Mencegah parsing berjalan langsung di layar editor saat fokus hilang sebelum diklik simpan
-            }
-        });
-
         function searchModul(containerId, barId) {
             let query = document.getElementById(barId).value.toLowerCase();
             let container = document.getElementById(containerId);
             let cards = container.getElementsByClassName("modul-card");
+            for (let i = 0; i < cards.length; i++) {
+                let keywords = cards[i].getAttribute("data-keywords").toLowerCase();
+                cards[i].style.display = keywords.includes(query) ? "block" : "none";
+            }
+        }
+
+        function searchCaseCards() {
+            let query = document.getElementById("searchCaseBar").value.toLowerCase();
+            let cards = document.getElementsByClassName("case-card");
             for (let i = 0; i < cards.length; i++) {
                 let keywords = cards[i].getAttribute("data-keywords").toLowerCase();
                 cards[i].style.display = keywords.includes(query) ? "block" : "none";
@@ -656,8 +785,6 @@
             qaData.forEach(q => {
                 let answerBlock = "";
                 let badgeLinked = q.linkedTo ? `<div class="linked-badge">🔗 Duplikat (Merujuk ke: "${q.linkedTo}")</div>` : "";
-                
-                // Gunakan parser markup pada visualisasi teks jawaban Q&A
                 let parsedAnswer = parseAdminMarkup(q.answer);
 
                 if (q.status === "answered") {
@@ -698,6 +825,7 @@
 
         renderMateri();
         renderPmlMateri();
+        renderCaseCards();
         renderQA();
         renderModulDropdown();
     </script>
