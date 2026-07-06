@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FASIH-Review & QA System Sakernas 2026</title>
+    <style>
+        :root {
+            --primary-green: #1b4d3e;
+            --light-green: #2e7d32;
+            --gold-accent: #c5a059;
+            --gold-light: #f4ebd0;
+            --dark-charcoal: #2b2b2b;
+            --bg-light: #f7f9f6;
+            --white: #ffffff;
+            --gray-border: #e0e4e1;
+            --danger: #dc3545;
+            --info-blue: #0d6efd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--dark-charcoal);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        /* Top Bar Role Simulator */
+        .role-bar {
+            background-color: var(--dark-charcoal);
+            color: white;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .role-btn {
+            background-color: var(--gold-accent);
+            color: var(--primary-green);
+            border: none;
+            padding: 4px 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .role-btn:hover { opacity: 0.9; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-green), #0a2f24);
+            color: var(--white);
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--gold-accent);
+        }
+
+        header h1 span { color: var(--gold-accent); }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-border);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 15px 5px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--light-green);
+            border-bottom-color: var(--gold-accent);
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Search Bar */
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray-border);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        .search-box:focus { border-color: var(--gold-accent); }
+
+        /* Admin Dashboard Section */
+        .admin-box {
+            background-color: #fffdf2;
+            border: 2px dashed var(--gold-accent);
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+        .admin-box h3 {
+            color: var(--primary-green);
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Content Card / Flashcard Base */
+        .modul-card {
+            background: var(--white);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .modul-card.new-gold-alert {
+            border: 2px solid var(--gold-accent) !important;
+            background: linear-gradient(to right, #ffffff, #fffdf2);
+            animation: pulse-gold-border 2s infinite alternate;
+        }
+        @keyframes pulse-gold-border {
+            0% { box-shadow: 0 0 4px rgba(197, 160, 89, 0.2); }
+            100% { box-shadow: 0 0 12px rgba(197, 160, 89, 0.5); }
+        }
+
+        .gold-warning-banner {
+            display: flex;
+            align-items: center;
+            color: #856404;
+            background-color: #fff3cd;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border: 1px solid #ffeeba;
+        }
+        .gold-warning-banner span { font-size: 1.1rem; margin-right: 6px; }
+
+        .modul-title {
+            font-weight: bold;
+            color: var(--primary-green);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .editable-area {
+            font-size: 0.95rem;
+            white-space: pre-line;
+        }
+
+        /* Buttons & Forms Elements */
+        .btn-edit {
+            background-color: var(--gold-accent);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+        .btn-action-panel {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .btn-delete { background-color: var(--danger); color: white; }
+        .btn-link-action { background-color: var(--info-blue); color: white; }
+
+        .qa-form {
+            background: var(--white);
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            outline: none;
+        }
+        .form-control:focus { border-color: var(--gold-accent); }
+
+        .btn-submit {
+            background-color: var(--light-green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-submit:hover { background-color: #246628; }
+
+        /* QA Layout CSS */
+        .qa-item {
+            background: white;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .qa-question { font-weight: bold; color: #b22222; }
+        .qa-meta { font-size: 0.75rem; color: #777; margin-bottom: 8px; }
+        .qa-answer { background: var(--bg-light); padding: 10px; border-radius: 4px; margin-top: 8px; font-size: 0.95rem;}
+        .linked-badge {
+            display: inline-block;
+            background-color: var(--info-blue);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Simulasi Peran Atas Halaman dengan Proteksi Password -->
+    <div class="role-bar">
+        <div>Mode Aplikasi saat ini: <strong id="currentRoleDisplay" style="color:var(--gold-accent)">PETUGAS (PPL)</strong></div>
+        <button class="role-btn" onclick="toggleRoleWithAuth()">🔄 Ganti Peran</button>
+    </div>
+
+    <header>
+        <h1>FASIH<span>QA</span>: Sistem Penegasan Aturan</h1>
+        <p>Review Konsep &amp; Manajemen Kendali Mutu Sakernas Agustus 2026</p>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'materi-section')">📖 PENEGASAN PPL</button>
+        <button class="tab-btn" onclick="switchTab(event, 'pml-section')">🔍 BUKU SAKU PML</button>
+        <button class="tab-btn" onclick="switchTab(event, 'qa-section')">💬 FORUM Q&amp;A</button>
+    </div>
+
+    <div class="container">
+        
+        <!-- SEKSI 1: BUKU SAKU PENEGASAN PPL -->
+        <div id="materi-section" class="tab-content active">
+            <!-- FORM TAMBAH PENEGASAN FLASHCARD PPL (ADMIN ONLY) -->
+            <div id="adminFlashcardForm" class="admin-box" style="display: none;">
+                <h3>⚠️ Form Tambah Flashcard Penegasan Baru (Admin)</h3>
+                <div class="form-group">
+                    <label>Judul Modul / Konsep Baru:</label>
+                    <input type="text" id="newFlashcardTitle" class="form-control" placeholder="Contoh: Modul 10 - Pembukuan Usaha">
+                </div>
+                <div class="form-group">
+                    <label>Isi Instruksi / Penegasan Lapangan:</label>
+                    <textarea id="newFlashcardContent" class="form-control" rows="3" placeholder="Tulis rincian aturan validasi/konsep di sini..."></textarea>
+                </div>
+                <button class="btn-submit" onclick="createFlashcard()">📢 Publikasikan Penegasan PPL</button>
+            </div>
+
+            <input type="text" id="searchBar" class="search-box" placeholder="Cari penegasan modul PPL..." onkeyup="searchModul('materiContainer', 'searchBar')">
+            <div id="materiContainer">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </div>
+
+        <!-- SEKSI 2: BUKU SAKU VALIDASI & PENEGASAN PML (NEW FEATURE) -->
+        <div id="pml-section" class="tab-content">
+            <!-- FORM TAMBAH PENEGASAN PML (ADMIN ONLY) -->
+            <div id="adminPmlForm" class="admin-box" style="display: none;">
+                <h3>⚠️ Form Tambah Penegasan Baru untuk PML (Admin)</h3>
+                <div class="form-group">
+                    <label>Judul Aspek Pemeriksaan PML:</label>
+                    <input type="text" id="newPmlTitle" class="form-control" placeholder="Contoh: Modul 10 - Aturan Editing-Coding KBJI">
+                </div>
+                <div class="form-group">
+                    <label>Isi Aturan Pemeriksaan / Manajemen Pengawasan:</label>
+                    <textarea id="newPmlContent" class="form-control" rows="3" placeholder="Tulis rincian instruksi kendali mutu pengawas di sini..."></textarea>
+                </div>
+                <button class="btn-submit" style="background-color:var(--primary-green);" onclick="createPmlFlashcard()">📢 Publikasikan Aturan PML</button>
+            </div>
+
+            <input type="text" id="searchPmlBar" class="search-box" placeholder="Cari aspek pemeriksaan PML..." onkeyup="searchModul('pmlContainer', 'searchPmlBar')">
+            <div id="pmlContainer">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </div>
+
+        <!-- SEKSI 3: FORUM TANYA JAWAB -->
+        <div id="qa-section" class="tab-content">
+            <!-- FORM TAMBAH DAFTAR MODUL BARU (ADMIN ONLY) -->
+            <div id="adminModulForm" class="admin-box" style="display: none;">
+                <h3>⚙️ Tambah Pilihan Kategori Modul Baru (Admin)</h3>
+                <div class="form-group">
+                    <label>Nama / Nomor Modul Kuesioner Baru:</label>
+                    <input type="text" id="newModulName" class="form-control" placeholder="Contoh: Modul 11 (Tempat Kerja)">
+                </div>
+                <button class="btn-submit" style="background-color: var(--gold-accent);" onclick="addNewModulCategory()">➕ Tambah Kategori Modul</button>
+            </div>
+
+            <!-- Form Bertanya khusus Petugas -->
+            <div id="askFormContainer" class="qa-form">
+                <h3>Form Ajukan Pertanyaan (PPL)</h3>
+                <div class="form-group" style="margin-top:10px;">
+                    <label>Modul Terkait:</label>
+                    <select id="qaModul" class="form-control">
+                        <!-- Dropdown dimuat secara dinamis oleh JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pertanyaan Lapangan / Kendali Mutu:</label>
+                    <textarea id="qaText" class="form-control" rows="3" placeholder="Tuliskan kendala eror validasi atau keraguan konsep lapangan di sini..."></textarea>
+                </div>
+                <button class="btn-submit" onclick="submitQuestion()">Kirim Pertanyaan Ke Admin</button>
+            </div>
+
+            <!-- List Pertanyaan Lapangan -->
+            <h3>Daftar Pertanyaan &amp; Penegasan Jawaban</h3>
+            <div id="qaContainer" style="margin-top:15px;">
+                <!-- Diisi otomatis oleh JavaScript -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentRole = "petugas";
+        const ADMIN_PASSWORD = "BPSLembata2026"; 
+
+        // Data Penegasan PPL
+        const defaultMateri = [
+            { id: 1, title: "Modul 2: Aturan Hubungan & Jenis Kelamin", content: "• Jenis kelamin KRT dan pasangannya di daftar ART wajib berlawanan.[cite: 1]\n• Hubungan Menantu dilarang berkode Belum Kawin.[cite: 1]\n• Umur minimum tamat SD adalah 10 tahun.[cite: 1]", isNew: false },
+            { id: 2, title: "Modul 7 & 9: Konsep Bekerja & Pertanian Subsisten", content: "• Berdasarkan ICLS ke-19, petani gurem yang hasilnya murni dikonsumsi sendiri dimasukkan ke Bukan Angkatan Kerja (Pekerja Subsisten).[cite: 1]\n• Jika lapangan usaha utama berkode pertanian, Blok 9 wajib bernilai 1 (Ya).[cite: 1]", isNew: false }
+        ];
+
+        // Data Default Kewajiban & Penegasan Pemeriksaan PML (NEW DATA)
+        const defaultPmlMateri = [
+            { id: 501, title: "Aspek 1: Manajemen Lapangan & Entry CAPI", content: "• PML wajib melakukan pengawasan lapangan dan memeriksa kelengkapan, konsistensi, serta kewajaran isian data kuesioner SAK.AGS26-AK.[cite: 1]\n• Selama periode pendataan, jika ada temuan ketidakwajaran/anomali, ditindaklanjuti dengan memberikan status REJECT disertai catatan pemeriksaan ke perangkat PPL.[cite: 1]", isNew: false },
+            { id: 502, title: "Aspek 2: Aturan Baku Pengodean (Editing-Coding)", content: "• PML bertugas mengisikan kode isian secara akurat meliputi: kode jurusan pendidikan, jenis pelatihan, KBLI, dan KBJI berdasarkan softfile Buku Kode.[cite: 1]\n• Periksa jawaban dengan pilihan 'Lainnya' atau 'Selain alasan di atas'. Jika rincian tertulis sebenarnya sudah tercakup di pilihan teks, pindahkan kode jawaban ke opsi yang sesuai.[cite: 1]" },
+            { id: 503, title: "Aspek 3: Validasi Struktur NIK & Geotagging", content: "• Pastikan isian NIK berjumlah 16 digit. Lakukan cross-check digit tanggal lahir NIK dengan rincian jenis kelamin dan tanggal lahir kuesioner.[cite: 1]\n• Tagging koordinat lokasi (MJU_LOKASI) bersifat wajib untuk seluruh sampel rumah tangga.[cite: 1]" }
+        ];
+
+        const defaultQA = [
+            { id: 101, modul: "Modul 7 (Bekerja)", question: "Apakah supir ojek online dimasukkan sebagai buruh atau berusaha?", answer: "Supir ojek online dikategorikan sebagai Berusaha Sendiri (Kode 2) dan secara konsep ICLS-20 masuk sebagai Dependent Contractor.[cite: 1, 2]", status: "answered", linkedTo: null }
+        ];
+
+        const defaultModulOptions = ["Modul 2 (Demografi)", "Modul 7 (Bekerja)", "Modul 9 (Pertanian)", "Modul 14 (Pekerja Informal)", "Modul Lainnya"];
+
+        // Sinkronisasi dengan LocalStorage
+        let materiData = JSON.parse(localStorage.getItem("sakernas_materi")) || defaultMateri;
+        let pmlMateriData = JSON.parse(localStorage.getItem("sakernas_pml_materi")) || defaultPmlMateri;
+        let qaData = JSON.parse(localStorage.getItem("sakernas_qa")) || defaultQA;
+        let modulOptions = JSON.parse(localStorage.getItem("sakernas_modul_options")) || defaultModulOptions;
+
+        function saveData() {
+            localStorage.setItem("sakernas_materi", JSON.stringify(materiData));
+            localStorage.setItem("sakernas_pml_materi", JSON.stringify(pmlMateriData));
+            localStorage.setItem("sakernas_qa", JSON.stringify(qaData));
+            localStorage.setItem("sakernas_modul_options", JSON.stringify(modulOptions));
+        }
+
+        function toggleRoleWithAuth() {
+            if (currentRole === "petugas") {
+                let passwordInput = prompt("🔑 Masukkan Kata Sandi Admin (PML/Koseka):");
+                if (passwordInput === ADMIN_PASSWORD) {
+                    currentRole = "admin";
+                    alert("🔓 Akses Diterima. Selamat datang di konsol Admin/PML.");
+                    updateInterface();
+                } else if (passwordInput !== null) {
+                    alert("❌ Kata sandi salah! Anda tidak memiliki otoritas mengubah materi.");
+                }
+            } else {
+                currentRole = "petugas";
+                alert("🔒 Anda kembali ke mode Petugas (PPL/Read-Only).");
+                updateInterface();
+            }
+        }
+
+        function updateInterface() {
+            document.getElementById("currentRoleDisplay").innerText = currentRole.toUpperCase() + (currentRole === "admin" ? " (PML/ADMIN)" : " (PPL)");
+            document.getElementById("askFormContainer").style.display = currentRole === "petugas" ? "block" : "none";
+            document.getElementById("adminFlashcardForm").style.display = currentRole === "admin" ? "block" : "none";
+            document.getElementById("adminPmlForm").style.display = currentRole === "admin" ? "block" : "none";
+            document.getElementById("adminModulForm").style.display = currentRole === "admin" ? "block" : "none";
+            renderMateri();
+            renderPmlMateri();
+            renderQA();
+            renderModulDropdown();
+        }
+
+        function switchTab(evt, sectionId) {
+            let contents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < contents.length; i++) contents[i].classList.remove("active");
+            let buttons = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove("active");
+            document.getElementById(sectionId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Pembuatan Penegasan PPL oleh Admin
+        function createFlashcard() {
+            let title = document.getElementById("newFlashcardTitle").value.trim();
+            let content = document.getElementById("newFlashcardContent").value.trim();
+            if (!title || !content) { alert("⚠️ Judul dan isi harus diisi!"); return; }
+
+            let newCard = { id: Date.now(), title: title, content: content, isNew: true };
+            materiData.unshift(newCard);
+            saveData();
+            document.getElementById("newFlashcardTitle").value = "";
+            document.getElementById("newFlashcardContent").value = "";
+            renderMateri();
+            alert("✨ Penegasan baru PPL berhasil dipublikasikan!");
+        }
+
+        // NEW FEATURE: Pembuatan Penegasan Aturan Mutu PML oleh Admin
+        function createPmlFlashcard() {
+            let title = document.getElementById("newPmlTitle").value.trim();
+            let content = document.getElementById("newPmlContent").value.trim();
+            if (!title || !content) { alert("⚠️ Judul dan isi pengawasan PML harus diisi!"); return; }
+
+            let newCard = { id: Date.now(), title: title, content: content, isNew: true };
+            pmlMateriData.unshift(newCard);
+            saveData();
+            document.getElementById("newPmlTitle").value = "";
+            document.getElementById("newPmlContent").value = "";
+            renderPmlMateri();
+            alert("✨ Penegasan aspek pemeriksaan baru PML berhasil dipublikasikan!");
+        }
+
+        function addNewModulCategory() {
+            let modulName = document.getElementById("newModulName").value.trim();
+            if (!modulName) { alert("⚠️ Nama kategori modul tidak boleh kosong!"); return; }
+            if (modulOptions.includes(modulName)) { alert("⚠️ Kategori modul tersebut sudah terdaftar."); return; }
+
+            if (modulOptions.includes("Modul Lainnya")) {
+                modulOptions.splice(modulOptions.indexOf("Modul Lainnya"), 0, modulName);
+            } else {
+                modulOptions.push(modulName);
+            }
+            saveData();
+            document.getElementById("newModulName").value = "";
+            renderModulDropdown();
+            alert(`✅ Kategori "${modulName}" Berhasil Ditambahkan!`);
+        }
+
+        function renderModulDropdown() {
+            let select = document.getElementById("qaModul");
+            select.innerHTML = "";
+            modulOptions.forEach(opt => {
+                select.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+        }
+
+        // Render Kartu Penegasan PPL
+        function renderMateri() {
+            let container = document.getElementById("materiContainer");
+            container.innerHTML = "";
+            materiData.forEach(m => {
+                let cardClass = m.isNew ? "modul-card new-gold-alert" : "modul-card";
+                let warningBanner = m.isNew ? `<div class="gold-warning-banner"><span>⚠️</span> PENEGASAN BARU: Petugas Wajib Membaca!</div>` : "";
+                let isEditable = currentRole === "admin" ? `contenteditable="true" style="border: 1px dashed var(--gold-accent); padding: 5px;"` : `contenteditable="false"`;
+                
+                let actionButtons = "";
+                if (currentRole === "admin") {
+                    actionButtons = `<div class="btn-action-panel"><button class="btn-edit" onclick="saveMateriText(${m.id}, 'ppl')">💾 Simpan</button><button class="btn-edit btn-delete" onclick="deleteFlashcard(${m.id}, 'ppl')">🗑️ Hapus</button></div>`;
+                } else if (m.isNew) {
+                    actionButtons = `<button class="btn-edit btn-submit" style="background-color: var(--light-green);" onclick="markAsUnderstood(${m.id}, 'ppl')">Selesai Memahami ✔</button>`;
+                }
+                
+                container.innerHTML += `<div class="${cardClass}" data-keywords="${m.title} ${m.content}">${warningBanner}<div class="modul-title">${m.title}</div><div id="materi-text-${m.id}" class="editable-area" ${isEditable}>${m.content}</div>${actionButtons}</div>`;
+            });
+        }
+
+        // NEW FEATURE: Render Buku Saku Penegasan & Aturan Pemeriksaan PML
+        function renderPmlMateri() {
+            let container = document.getElementById("pmlContainer");
+            container.innerHTML = "";
+            pmlMateriData.forEach(m => {
+                let cardClass = m.isNew ? "modul-card new-gold-alert" : "modul-card";
+                let warningBanner = m.isNew ? `<div class="gold-warning-banner"><span>⚠️</span> PENEGASAN MUTU PEMERIKSAAN BARU UNTUK PML!</div>` : "";
+                let isEditable = currentRole === "admin" ? `contenteditable="true" style="border: 1px dashed var(--gold-accent); padding: 5px;"` : `contenteditable="false"`;
+                
+                let actionButtons = "";
+                if (currentRole === "admin") {
+                    actionButtons = `<div class="btn-action-panel"><button class="btn-edit" onclick="saveMateriText(${m.id}, 'pml')">💾 Simpan</button><button class="btn-edit btn-delete" onclick="deleteFlashcard(${m.id}, 'pml')">🗑️ Hapus</button></div>`;
+                } else if (m.isNew) {
+                    actionButtons = `<button class="btn-edit btn-submit" style="background-color: var(--primary-green);" onclick="markAsUnderstood(${m.id}, 'pml')">Selesai Memahami ✔</button>`;
+                }
+                
+                container.innerHTML += `<div class="${cardClass}" data-keywords="${m.title} ${m.content}">${warningBanner}<div class="modul-title" style="color:var(--light-green);">${m.title}</div><div id="pml-text-${m.id}" class="editable-area" ${isEditable}>${m.content}</div>${actionButtons}</div>`;
+            });
+        }
+
+        function markAsUnderstood(id, type) {
+            if (type === 'ppl') {
+                let idx = materiData.findIndex(item => item.id === id);
+                if (idx !== -1) { materiData[idx].isNew = false; }
+            } else {
+                let idx = pmlMateriData.findIndex(item => item.id === id);
+                if (idx !== -1) { pmlMateriData[idx].isNew = false; }
+            }
+            saveData();
+            type === 'ppl' ? renderMateri() : renderPmlMateri();
+        }
+
+        function deleteFlashcard(id, type) {
+            if (confirm("Apakah Anda yakin ingin menghapus materi penegasan ini?")) {
+                if (type === 'ppl') { materiData = materiData.filter(item => item.id !== id); }
+                else { pmlMateriData = pmlMateriData.filter(item => item.id !== id); }
+                saveData();
+                type === 'ppl' ? renderMateri() : renderPmlMateri();
+            }
+        }
+
+        function saveMateriText(id, type) {
+            let updatedText = document.getElementById(type === 'ppl' ? `materi-text-${id}` : `pml-text-${id}`).innerText;
+            if (type === 'ppl') {
+                let idx = materiData.findIndex(item => item.id === id);
+                if (idx !== -1) materiData[idx].content = updatedText;
+            } else {
+                let idx = pmlMateriData.findIndex(item => item.id === id);
+                if (idx !== -1) pmlMateriData[idx].content = updatedText;
+            }
+            saveData();
+            alert("✅ Penegasan Berhasil Diperbarui oleh Admin!");
+        }
+
+        function searchModul(containerId, barId) {
+            let query = document.getElementById(barId).value.toLowerCase();
+            let container = document.getElementById(containerId);
+            let cards = container.getElementsByClassName("modul-card");
+            for (let i = 0; i < cards.length; i++) {
+                let keywords = cards[i].getAttribute("data-keywords").toLowerCase();
+                cards[i].style.display = keywords.includes(query) ? "block" : "none";
+            }
+        }
+
+        function submitQuestion() {
+            let modul = document.getElementById("qaModul").value;
+            let text = document.getElementById("qaText").value.trim();
+            if (!text) { alert("⚠️ Harap isi teks pertanyaan."); return; }
+
+            let newQuestion = { id: Date.now(), modul: modul, question: text, answer: "", status: "pending", linkedTo: null };
+            qaData.unshift(newQuestion);
+            saveData();
+            document.getElementById("qaText").value = "";
+            renderQA();
+            alert("🚀 Pertanyaan dikirim ke Admin/PML.");
+        }
+
+        function deleteQuestion(id) {
+            if (confirm("Hapus pertanyaan ini?")) {
+                qaData = qaData.filter(item => item.id !== id);
+                saveData();
+                renderQA();
+            }
+        }
+
+        function linkToExistingQuestion(targetId, sourceId) {
+            if(!sourceId) return;
+            let targetIndex = qaData.findIndex(item => item.id === targetId);
+            let sourceItem = qaData.find(item => item.id == sourceId);
+            if (targetIndex !== -1 && sourceItem) {
+                qaData[targetIndex].answer = sourceItem.answer || "Silakan merujuk pada pertanyaan terkait.";
+                qaData[targetIndex].status = "answered";
+                qaData[targetIndex].linkedTo = sourceItem.question;
+                saveData();
+                renderQA();
+                alert("🔗 Pertanyaan berhasil di-link!");
+            }
+        }
+
+        function renderQA() {
+            let container = document.getElementById("qaContainer");
+            container.innerHTML = "";
+            if (qaData.length === 0) { container.innerHTML = "<p class='no-answer'>Belum ada pertanyaan.</p>"; return; }
+
+            let answeredDropdownOptions = `<option value="">-- Pilih Pertanyaan yang Sama --</option>`;
+            qaData.forEach(q => { if(q.status === "answered" && !q.linkedTo) answeredDropdownOptions += `<option value="${q.id}">${q.question.substring(0, 45)}...</option>`; });
+
+            qaData.forEach(q => {
+                let answerBlock = "";
+                let badgeLinked = q.linkedTo ? `<div class="linked-badge">🔗 Duplikat (Merujuk ke: "${q.linkedTo}")</div>` : "";
+                
+                if (q.status === "answered") {
+                    answerBlock = `<div class="qa-answer">${badgeLinked} <strong>💡 Jawaban Resmi Admin:</strong> ${q.answer}</div>`;
+                } else {
+                    if (currentRole === "admin") {
+                        answerBlock = `
+                            <div class="qa-answer" style="background:#fff4e6;">
+                                <strong>📝 Opsi 1: Berikan Penegasan Jawaban Mandiri:</strong>
+                                <textarea id="reply-text-${q.id}" class="form-control" rows="2" style="margin:5px 0;"></textarea>
+                                <button class="btn-submit" style="padding:4px 10px; font-size:0.85rem;" onclick="submitAnswer(${q.id})">Kirim Jawaban</button>
+                                <div style="margin-top:12px; border-top:1px dashed #ccc; padding-top:10px;">
+                                    <strong>🔗 Opsi 2: Hubungkan ke Pembahasan Lain:</strong>
+                                    <select class="form-control" style="margin:5px 0; font-size:0.85rem;" onchange="linkToExistingQuestion(${q.id}, this.value)">${answeredDropdownOptions}</select>
+                                </div>
+                            </div>`;
+                    } else {
+                        answerBlock = `<div class="qa-answer no-answer">⏳ Menunggu jawaban penegasan resmi dari Admin/PML...</div>`;
+                    }
+                }
+                let adminDeleteBtn = currentRole === "admin" ? `<button class="btn-edit btn-delete" style="padding:3px 8px; font-size:0.75rem; margin-top:5px;" onclick="deleteQuestion(${q.id})">🗑️ Hapus Pertanyaan</button>` : "";
+                container.innerHTML += `<div class="qa-item"><div class="qa-meta">📌 Kategori: <strong>${q.modul}</strong></div><div class="qa-question">❓ Tanya: "${q.question}"</div>${answerBlock}${adminDeleteBtn}</div>`;
+            });
+        }
+
+        function submitAnswer(id) {
+            let ansText = document.getElementById(`reply-text-${id}`).value.trim();
+            if (!ansText) { alert("⚠️ Jawaban tidak boleh kosong."); return; }
+            let index = qaData.findIndex(item => item.id === id);
+            if (index !== -1) {
+                qaData[index].answer = ansText;
+                qaData[index].status = "answered";
+                saveData();
+                renderQA();
+                alert("✨ Jawaban penegasan terpublikasi!");
+            }
+        }
+
+        renderMateri();
+        renderPmlMateri();
+        renderQA();
+        renderModulDropdown();
+    </script>
+</body>
+</html>
